@@ -1,18 +1,13 @@
-/**
- * @jest-environment ./local-registry/test-env.js
- */
-const { execSync } = require('child_process');
+const { execAsync, publishToLocalRegistry } = require('../local-registry/util');
 
-beforeAll(() => execSync(`npm publish --registry ${global.localRegistry.url}`));
+beforeAll(() => publishToLocalRegistry());
 
 describe('a test that requires the local-registry', () => {
-  test('publish the package and use it with npx', () => {
+  test('publish the package and use it with npx', async () => {
     const expected = 'Hello Adam\n';
 
-    const actual = execSync(
-      `npm_config_registry=${global.localRegistry.url} npx @bigab/local-registry-spike`
-    ).toString();
+    const output = await execAsync(`npx @bigab/local-registry-spike`);
 
-    expect(actual).toBe(expected);
+    expect(output).toBe(expected);
   });
 });
