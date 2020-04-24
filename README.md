@@ -1,4 +1,6 @@
-# Template:
+# Local Registry Spike
+
+Just testing out how to use a Verdaccio local registry to run CLI tests
 
 ![CircleCI Status](https://circleci.com/gh/BigAB/local-registry-spike.svg?style=svg)
 
