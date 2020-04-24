@@ -19,4 +19,4 @@ jobs:
           name: test
           command: yarn test
       - store_test_results: # for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
-          path: test-results.xml
+          path: coverage
