@@ -9,9 +9,9 @@
   "devDependencies": {
     "get-port": "^5.1.1",
     "get-urls": "^9.2.0",
-    "jest": "25.1.0",
-    "jest-circus": "^25.1.0",
-    "jest-environment-node": "^25.1.0",
-    "verdaccio": "^4.5.1"
-  }
+    "jest": "25.4.0",
+    "jest-environment-node": "^25.4.0",
+    "verdaccio": "^4.6.0"
+  },
+  "dependencies": {}
 }

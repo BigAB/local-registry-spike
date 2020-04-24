@@ -10,7 +10,7 @@ describe('a test that requires the local-registry', () => {
     const expected = 'Hello Adam\n';
 
     const actual = execSync(
-      `NPM_CONFIG_REGISTRY=${global.localRegistry.url} npx @bigab/local-registry-spike`
+      `npm_config_registry=${global.localRegistry.url} npx @bigab/local-registry-spike`
     ).toString();
 
     expect(actual).toBe(expected);
