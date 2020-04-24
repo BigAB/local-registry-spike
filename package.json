@@ -4,7 +4,7 @@
   "bin": "src/index.js",
   "scripts": {
     "start": "node src",
-    "test": "jest --maxWorkers=1 --collectCoverage=true"
+    "test": "jest --maxWorkers=1 --collectCoverage=true --watchAll=false"
   },
   "devDependencies": {
     "get-port": "^5.1.1",
