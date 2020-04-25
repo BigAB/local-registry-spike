@@ -4,10 +4,8 @@
 const { exec } = require('child_process');
 const { promisify } = require('util');
 const rimraf = require('rimraf');
-const mkdirp = require('mkdirp');
 
 const asyncExec = promisify(exec);
-const rmrf = promisify(rimraf);
 
 describe('using this modules cli from npx', () => {
   beforeAll(() => asyncExec(`npm publish`));

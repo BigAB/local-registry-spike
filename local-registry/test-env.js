@@ -1,5 +1,3 @@
-const { exec } = require('child_process');
-const { promisify } = require('util');
 const NodeEnvironment = require('jest-environment-node');
 const getPort = require('get-port');
 const startServer = require('verdaccio').default;
@@ -16,7 +14,6 @@ class EnvironmentWithLocalRegistry extends NodeEnvironment {
     await super.setup();
     this.port = await getPort();
     this.dir = await tmp.dir({ unsafeCleanup: true });
-    console.log('ADAM dir', this.dir.path);
     const {
       addrs: { proto, host, port },
       registryServer,
