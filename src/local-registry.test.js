@@ -1,5 +1,5 @@
 /**
- * @jest-environment ./local-registry/test-env.js
+ * @jest-environment @bigab/local-registry-test-environment
  */
 const { exec } = require('child_process');
 const { promisify } = require('util');
