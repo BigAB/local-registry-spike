@@ -1,20 +1,61 @@
 /**
  * @jest-environment ./local-registry/test-env.js
  */
-const { execSync } = require('child_process');
+const { exec } = require('child_process');
+const { promisify } = require('util');
+const rimraf = require('rimraf');
+const mkdirp = require('mkdirp');
 
-beforeAll(() => execSync(`npm publish --registry ${global.localRegistry.url}`));
+const asyncExec = promisify(exec);
+const rmrf = promisify(rimraf);
 
-describe('a test that requires the local-registry', () => {
-  test('publish the package and use it with npx', () => {
-    const expected = 'Hello Adam\n';
+describe('using this modules cli from npx', () => {
+  beforeAll(() => asyncExec(`npm publish`));
+  test('publish the package and use it with npx', async () => {
+    const expected = 'Hello World\n';
 
-    const actual = execSync(`npx @bigab/local-registry-spike`, {
-      env: {
-        ...process.env,
-        npm_config_registry: global.localRegistry.url,
-      },
-    }).toString();
+    const stdio = await asyncExec(`npx @bigab/local-registry-spike`);
+    const actual = stdio.stdout.toString();
+
+    expect(actual).toBe(expected);
+  });
+});
+
+describe('Testing a subpackage', () => {
+  const tempProjectPath = './tmp/project';
+  beforeAll(async () => {
+    // publish the subpackage to local-registry
+    await asyncExec(`npm publish`, {
+      cwd: './packages/subpackage',
+    });
+
+    // create temporary project for tests
+    await mkdirp('tmp/project');
+    await asyncExec(`npm init --yes`, {
+      cwd: tempProjectPath,
+    });
+  });
+
+  afterAll(async () => {
+    await rmrf('./tmp');
+  });
+
+  test('install subpackage and use it with npx locally', async () => {
+    const expected = 'Hello from subpackage\n';
+
+    await asyncExec(`npm install @bigab/subpackage`, { cwd: tempProjectPath });
+
+    const stdio = await asyncExec(`npx subpackage`, { cwd: tempProjectPath });
+    const actual = stdio.stdout.toString();
+
+    expect(actual).toBe(expected);
+  });
+
+  test('use directly from registry with npx', async () => {
+    const expected = 'Hello from subpackage\n';
+
+    const stdio = await asyncExec(`npx @bigab/subpackage`);
+    const actual = stdio.stdout.toString();
 
     expect(actual).toBe(expected);
   });

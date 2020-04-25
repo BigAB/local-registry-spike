@@ -10,6 +10,7 @@ class EnvironmentWithLocalRegistry extends NodeEnvironment {
   async setup() {
     await super.setup();
     this.global.localRegistry = await spawnLocalRegistry();
+    process.env.npm_config_registry = this.global.localRegistry.url;
   }
 
   async teardown() {
@@ -28,10 +29,10 @@ async function spawnLocalRegistry() {
     '--config',
     './local-registry/config.yml',
     '--listen',
-    port
+    `${port}`,
   ]);
   const localRegistryUrl = await new Promise((res, rej) => {
-    localRegistryProcess.stdout.on('data', data => {
+    localRegistryProcess.stdout.on('data', (data) => {
       // wait for local-registry to come online
       if (data.includes('http address')) {
         const localRegistry = [...getUrls(data.toString())][0];
@@ -41,7 +42,7 @@ async function spawnLocalRegistry() {
   });
   return {
     process: localRegistryProcess,
-    url: localRegistryUrl
+    url: localRegistryUrl,
   };
 }
 
