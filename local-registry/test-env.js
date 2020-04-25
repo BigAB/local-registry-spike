@@ -1,49 +1,91 @@
-const { spawn, exec } = require('child_process');
+const { exec } = require('child_process');
 const { promisify } = require('util');
 const NodeEnvironment = require('jest-environment-node');
 const getPort = require('get-port');
-const getUrls = require('get-urls');
-
-const asyncExec = promisify(exec);
+const startServer = require('verdaccio').default;
+const tmp = require('tmp-promise');
 
 class EnvironmentWithLocalRegistry extends NodeEnvironment {
+  constructor(config, { docblockPragmas }) {
+    super(config);
+    const { logLevel = 'error', port } = docblockPragmas;
+    this.logLevel = logLevel;
+    this.port = port;
+  }
   async setup() {
     await super.setup();
-    this.global.localRegistry = await spawnLocalRegistry();
-    process.env.npm_config_registry = this.global.localRegistry.url;
+    this.port = await getPort();
+    this.dir = await tmp.dir({ unsafeCleanup: true });
+    console.log('ADAM dir', this.dir.path);
+    const {
+      addrs: { proto, host, port },
+      registryServer,
+    } = await this.spawnLocalRegistry();
+    this.global.localRegistry = registryServer;
+    const registryUrl = `${proto}://${host}:${port}`;
+    this.global.process.env.npm_config_registry = registryUrl;
+    process.env.npm_config_registry = registryUrl;
   }
 
   async teardown() {
     // kill the local registry
-    this.global.localRegistry.process.kill();
+    this.global.localRegistry.close();
     // delete the local registry store
-    await asyncExec(`rm -rf local-registry/storage`);
+    this.dir.cleanup();
     await super.teardown();
   }
-}
 
-async function spawnLocalRegistry() {
-  const port = await getPort({ port: [4873, 4872, 4871] });
-  const localRegistryProcess = spawn('npx', [
-    'verdaccio',
-    '--config',
-    './local-registry/config.yml',
-    '--listen',
-    `${port}`,
-  ]);
-  const localRegistryUrl = await new Promise((res, rej) => {
-    localRegistryProcess.stdout.on('data', (data) => {
-      // wait for local-registry to come online
-      if (data.includes('http address')) {
-        const localRegistry = [...getUrls(data.toString())][0];
-        res(localRegistry);
-      }
+  async spawnLocalRegistry() {
+    return new Promise((resolve, reject) => {
+      startServer(
+        {
+          storage: this.dir.path,
+          uplinks: {
+            npmjs: {
+              url: 'https://registry.npmjs.org/',
+              cache: false,
+            },
+          },
+          packages: {
+            '@*/*': {
+              access: '$all',
+              publish: '$all',
+              unpublish: '$all',
+              proxy: 'npmjs',
+            },
+            '**': {
+              access: '$all',
+              publish: '$all',
+              unpublish: '$all',
+              proxy: 'npmjs',
+            },
+          },
+          logs: [
+            {
+              type: 'stdout',
+              format: 'pretty',
+              level: this.logLevel,
+            },
+          ],
+        },
+        this.port,
+        'local-registry/storage',
+        '4.0.0',
+        'Local Registry Test Env',
+        (webServer, addrs) => {
+          webServer.listen(addrs.port || addrs.path, addrs.host, (error) => {
+            if (error) {
+              reject(error);
+            }
+            console.log(
+              `local-registry (verdaccio) running on port ${addrs.port}`
+            );
+            resolve({ addrs, registryServer: webServer });
+          });
+        }
+      );
     });
-  });
-  return {
-    process: localRegistryProcess,
-    url: localRegistryUrl,
-  };
+  }
 }
 
 module.exports = EnvironmentWithLocalRegistry;

@@ -1,8 +1,5 @@
 # path to a directory with all packages
 storage: ./storage
-auth:
-  htpasswd:
-    file: ./htpasswd
 
 # a list of other known repositories we can talk to
 uplinks:

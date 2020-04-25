@@ -43,9 +43,13 @@ describe('Testing a subpackage', () => {
   test('install subpackage and use it with npx locally', async () => {
     const expected = 'Hello from subpackage\n';
 
-    await asyncExec(`npm install @bigab/subpackage`, { cwd: tempProjectPath });
+    await asyncExec(`yarn add @bigab/subpackage`, {
+      cwd: tempProjectPath,
+    });
 
-    const stdio = await asyncExec(`npx subpackage`, { cwd: tempProjectPath });
+    const stdio = await asyncExec(`npx subpackage`, {
+      cwd: tempProjectPath,
+    });
     const actual = stdio.stdout.toString();
 
     expect(actual).toBe(expected);
