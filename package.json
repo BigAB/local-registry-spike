@@ -2,7 +2,6 @@
   "name": "@bigab/local-registry-spike",
   "version": "0.4.0",
   "bin": "src/index.js",
-  "license": "unlicensed",
   "scripts": {
     "start": "node src",
     "test": "jest"

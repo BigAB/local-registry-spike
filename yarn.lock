@@ -264,10 +264,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bigab/local-registry-test-environment@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@bigab/local-registry-test-environment/-/local-registry-test-environment-0.3.0.tgz#965f97e9269a5356ef2960806eed73379ad2bb6d"
-  integrity sha512-DsqPoPQQthMWqLdB1zfpKNXaXDmotxzj/2lcCEQANI4YGtQIHW9/X5rFBwJ1JRJ5QJLrZcKkEmnbHKz9IFxWQg==
+"@bigab/local-registry-test-environment@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@bigab/local-registry-test-environment/-/local-registry-test-environment-0.4.0.tgz#000b9be9688dc395a52ec6dbeb715ff43a41e7e3"
+  integrity sha512-K9T7qwAOyQ4OZ3Rquv6AQHAMSUariVbgV3HEs2yBLsDdXa7vgOrDg3yTYNyINYyReX9FsBpNUarPvYRYIP+iyQ==
   dependencies:
     get-port "^5.1.1"
     jest-environment-node "^25.4.0"
